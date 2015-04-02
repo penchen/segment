@@ -41,7 +41,7 @@ function weekNumber($timestamp = '') {
 
 function isAjax(){
     if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])){
-        if('xmlhttpreqest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])){
+        if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])){
             return true;
         }
     }
