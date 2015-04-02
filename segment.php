@@ -33,3 +33,21 @@ function weekNumber($timestamp = '') {
     $timestamp = empty($timestamp) ? time() : $timestamp;
     return date("W", $timestamp) - date("W", strtotime(date("Y-m-01", $timestamp))) + 1;
 }
+
+
+/**
+ * 判断是否ajax请求
+ */
+
+function isAjax(){
+    if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])){
+        if('xmlhttpreqest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])){
+            return true;
+        }
+    }
+
+    //下面是thinkphp判断ajax
+    if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])){
+        return true;
+    }
+}
