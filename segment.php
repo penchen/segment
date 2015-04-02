@@ -51,3 +51,24 @@ function isAjax(){
         return true;
     }
 }
+
+    /**
+     * 处理文章列表,对文章按时间进行排序
+     */
+    private function array_sort_by_sub_field($article_list,$order_field = 'pub_time'){
+        $sort = array(
+            'direction' => 'SORT_DESC', //排序顺序标志 SORT_DESC 降序；SORT_ASC 升序
+            'field'     => $order_field,       //排序字段
+        );
+        $arrSort = array();
+        foreach($article_list AS $uniqid => $row){
+            foreach($row AS $key=>$value){
+                $arrSort[$key][$uniqid] = $value;
+            }
+        }
+        if($sort['direction']){
+            array_multisort($arrSort[$sort['field']], constant($sort['direction']), $article_list);
+        }
+
+        return $article_list;
+    }
