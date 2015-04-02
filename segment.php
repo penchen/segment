@@ -25,3 +25,11 @@ function GetWeekDate($week,$year){
     $last_date_of_week = date("Ymd",$timestamp);
     return array($firt_date_of_week,$last_date_of_week);
 }
+
+/**
+ * PHP如何返回某一天是属于这个月中的第几周？
+ */
+function weekNumber($timestamp = '') {
+    $timestamp = empty($timestamp) ? time() : $timestamp;
+    return date("W", $timestamp) - date("W", strtotime(date("Y-m-01", $timestamp))) + 1;
+}
