@@ -55,7 +55,7 @@ function isAjax(){
     /**
      * 处理文章列表,对文章按时间进行排序
      */
-    private function array_sort_by_sub_field($article_list,$order_field = 'pub_time'){
+    function array_sort_by_sub_field($article_list,$order_field = 'pub_time'){
         $sort = array(
             'direction' => 'SORT_DESC', //排序顺序标志 SORT_DESC 降序；SORT_ASC 升序
             'field'     => $order_field,       //排序字段
@@ -72,3 +72,67 @@ function isAjax(){
 
         return $article_list;
     }
+    
+//2种中文截取无乱码
+function utf8sub($str,$len){
+    if($len<=0){
+        return ;
+    }
+    $res="";
+    $offset=0;
+    $chars=0;
+    $length=strlen($str);
+    while($chars<$len && $offset<$length){
+ 
+        $hign=decbin(ord(substr($str,$offset,1)));
+            if(strlen($hign)<8){
+                $count=1;
+            }elseif(substr($hign,0,3)=="110"){
+                $count=2;
+            }elseif(substr($hign,0,4)=="1110"){
+                $count=3;
+            }elseif(substr($hign,0,5)=="11110"){
+                $count=4;
+            }elseif(substr($hign,0,6)=="111110"){
+                $count=5;
+            }elseif(substr($hign,0,7)=="1111110"){
+                $count=6;
+            }
+ 
+        $res.=substr($str,$offset,$count);
+        $offset+=$count;
+        $chars+=1;
+ 
+    }
+    return $res;
+}
+
+
+function utf8sub1($str,$len){
+    $chars=0;
+    $res="";
+    $offset=0;
+    $length=strlen($str);
+    while($chars<$len && $offset<$length){
+        $hign=decbin(ord(substr($str,$offset,1)));
+        if(strlen($hign)<8){
+            $count=1;
+        }elseif($hign & "11100000"=="11000000"){
+            $count=2;
+        }elseif($hign & "11110000"=="11100000"){
+            $count=3;
+        }elseif($hign & "11111000"=="11110000"){
+            $count=4;
+        }elseif($hign & "11111100"=="11111000"){
+            $count=5;
+        }elseif($hign & "11111110"=="11111100"){
+            $count=6;
+        }
+        $res.=substr($str,$offset,$count);
+        $chars++;
+        $offset+=$count;
+    }
+    return $res;
+}
+$a="中华ah人民hdj";
+echo utf8sub($a,5);
