@@ -140,5 +140,5 @@ echo utf8sub($a,5);
 
 //统计字数
 function str_count($text,$charset = 'UTF-8'){
-    mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($text)),$charset)
+    return mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($text)),$charset));
 }
