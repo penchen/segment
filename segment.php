@@ -136,3 +136,9 @@ function utf8sub1($str,$len){
 }
 $a="中华ah人民hdj";
 echo utf8sub($a,5);
+
+
+//统计字数
+function str_count($text,$charset = 'UTF-8'){
+    mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($text)),$charset)
+}
