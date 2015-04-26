@@ -39,7 +39,7 @@ function weekNumber($timestamp = '') {
  * 判断是否ajax请求
  */
 
-function isAjax(){
+function is_ajax(){
     if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])){
         if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])){
             return true;
@@ -51,6 +51,7 @@ function isAjax(){
         return true;
     }
 }
+
 
     /**
      * 处理文章列表,对文章按时间进行排序
@@ -68,10 +69,70 @@ function isAjax(){
         }
         if($sort['direction']){
             array_multisort($arrSort[$sort['field']], constant($sort['direction']), $article_list);
-        }
 
-        return $article_list;
+/**
+ * 处理文章列表,对文章按时间进行排序
+ */
+function array_sort_by_sub_field($article_list,$order_field = 'pub_time'){
+    $sort = array(
+        'direction' => 'SORT_DESC', //排序顺序标志 SORT_DESC 降序；SORT_ASC 升序
+        'field'     => $order_field,       //排序字段
+    );
+    $arrSort = array();
+    foreach($article_list AS $uniqid => $row){
+        foreach($row AS $key=>$value){
+            $arrSort[$key][$uniqid] = $value;
+
+        }
     }
+    if($sort['direction']){
+        array_multisort($arrSort[$sort['field']], constant($sort['direction']), $article_list);
+    }
+
+    return $article_list;
+}
+
+
+/**
+ * 多线程
+ * @param $nodes
+ * @return array
+ */
+function multiple_threads_request($nodes){
+    if(empty($nodes)){
+        return false;
+    }
+    $mh = curl_multi_init();
+    $curl_array = array();
+    $file_fp = array();
+    foreach($nodes as $i => $url)
+    {
+        $curl_array[$i] = curl_init($url['remote']);
+        //curl_setopt($curl_array[$i], CURLOPT_RETURNTRANSFER, true);
+
+        $file_fp[$i] = fopen($url['local'],"w");
+        curl_setopt($curl_array[$i], CURLOPT_FILE, $file_fp[$i]);
+        curl_setopt($curl_array[$i], CURLOPT_HEADER, 0);
+
+        curl_multi_add_handle($mh, $curl_array[$i]);
+    }
+    $running = NULL;
+    do {
+        //usleep(10000);
+        curl_multi_exec($mh,$running);
+    } while($running > 0);
+
+    $res = array();
+    foreach($nodes as $i => $url)
+    {
+        $res[$url] = curl_multi_getcontent($curl_array[$i]['remote']);
+    }
+
+    foreach($nodes as $i => $url){
+        curl_multi_remove_handle($mh, $curl_array[$i]);
+        fclose($file_fp[$i]); //关闭文件
+    }
+
     
 //2种中文截取无乱码
 function utf8sub($str,$len){
@@ -142,3 +203,8 @@ echo utf8sub($a,5);
 function str_count($text,$charset = 'UTF-8'){
     return mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($text)),$charset));
 }
+
+    curl_multi_close($mh);
+    return $res;
+}
+
