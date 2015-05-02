@@ -204,7 +204,14 @@ function str_count($text,$charset = 'UTF-8'){
     return mb_strlen(preg_replace('/\s/','',html_entity_decode(strip_tags($text)),$charset));
 }
 
-    curl_multi_close($mh);
-    return $res;
-}
+
+
+//过滤表情字
+//入库前
+$text = preg_replace_callback('/[\xf0-\xf7].{3}/', function($r) { return '@E' . base64_encode($r[0]);}, $text);
+//出库后
+$text = preg_replace_callback('/@E(.{6}==)/', function($r) {return base64_decode($r[1]);}, $text);
+
+
+
 
