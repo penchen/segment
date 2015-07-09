@@ -233,7 +233,7 @@ $text = preg_replace_callback('/@E(.{6}==)/', function($r) {return base64_decode
 
             $loop_lt = ($cur_page >5) ? 5 :$cur_page;
             for($i = $loop_lt; $i > 1 ; $i--){
-                $loop_page = $cur_page - $i;
+                $loop_page = $cur_page - $i + 1;
                 $pagehtml .= "<a href={$prefix}{$loop_page}{$suffix}>{$loop_page}</a>";
             }
             $pagehtml.= "<span class='current'>{$cur_page}</span>";
