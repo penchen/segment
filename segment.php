@@ -214,4 +214,43 @@ $text = preg_replace_callback('/@E(.{6}==)/', function($r) {return base64_decode
 
 
 
+    /**
+     * 获取分页html
+     */
+    private function get_pager_html($cur_page,$prefix,$total,$size = 50,$suffix = '.html'){
+        $pagehtml = '';
+
+        $total_page = ceil($total / $size);
+        $cur_page = ($cur_page > $total_page) ? $total_page : $cur_page;
+
+        if($total_page > 1){
+            $prev_page = $cur_page - 1;
+            $next_page = $cur_page + 1;
+            if($cur_page != 1){
+                $pagehtml .= "<a href={$prefix}1{$suffix}>第一页</a>";
+                $pagehtml .= "<a href={$prefix}{$prev_page}{$suffix}>上一页</a>";
+            }
+
+            $loop_lt = ($cur_page >5) ? 5 :$cur_page;
+            for($i = $loop_lt; $i > 1 ; $i--){
+                $loop_page = $cur_page - $i;
+                $pagehtml .= "<a href={$prefix}{$loop_page}{$suffix}>{$loop_page}</a>";
+            }
+            $pagehtml.= "<span class='current'>{$cur_page}</span>";
+
+            $c_page = $total_page - $cur_page;
+            $loop_gt = ($c_page >5) ? 5 :$c_page;
+            for($i = 1; $i < $loop_gt ; $i++){
+                $loop_page = $cur_page + $i;
+                $pagehtml .= "<a href={$prefix}{$loop_page}{$suffix}>{$loop_page}</a>";
+            }
+
+            if($cur_page != $total_page){
+                $pagehtml .= "<a href={$prefix}{$next_page}{$suffix}>下一页</a>";
+                $pagehtml .= "<a href={$prefix}{$total_page}{$suffix}>最后一页</a>";
+            }
+        }
+
+        return $pagehtml;
+    }
 
